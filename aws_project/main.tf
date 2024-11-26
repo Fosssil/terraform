@@ -30,8 +30,14 @@ resource "aws_volume_attachment" "ebs_attach" {
   instance_id = aws_instance.myweb.id
 }
 
+resource "time_sleep" "wait_1m" {
+  depends_on      = [aws_instance.myweb, aws_ebs_volume.myebs, aws_volume_attachment.ebs_attach]
+  create_duration = "1m"
+}
+
 ## Setting up provisioner and connection block in null_resources
 resource "null_resource" "null_remote" {
+  depends_on = [time_sleep.wait_1m]
   provisioner "remote-exec" {
     inline = [
       "sudo mkfs.xfs /dev/xvdb",
@@ -52,6 +58,7 @@ resource "null_resource" "null_remote" {
 
 ## Open firefox browser
 resource "null_resource" "null_local" {
+  depends_on = [time_sleep.wait_1m, null_resource.null_remote]
   provisioner "local-exec" {
     command = "firefox http://${aws_instance.myweb.public_ip}/"
   }
