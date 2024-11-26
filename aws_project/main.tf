@@ -29,26 +29,9 @@ resource "aws_volume_attachment" "ebs_attach" {
   volume_id   = aws_ebs_volume.myebs.id
   instance_id = aws_instance.myweb.id
 }
-## Null resource to wait until the instance is running
-resource "null_resource" "wait_for_instance" {
-  depends_on = [aws_instance.myweb]
-
-  provisioner "local-exec" {
-    command = <<EOT
-while true; do
-  state=$(aws ec2 describe-instance-status --instance-ids ${aws_instance.myweb.id} --query 'InstanceStatuses[0].InstanceState.Name' --output text)
-  if [ "$state" == "running" ]; then
-    break
-  fi
-  sleep 5
-done
-EOT
-  }
-}
 
 ## Setting up provisioner and connection block in null_resources
 resource "null_resource" "null_remote" {
-  depends_on = [null_resource.wait_for_instance]
   provisioner "remote-exec" {
     inline = [
       "sudo mkfs.xfs /dev/xvdb",
