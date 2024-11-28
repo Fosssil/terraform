@@ -30,6 +30,7 @@ resource "aws_volume_attachment" "ebs_attach" {
   instance_id = aws_instance.myweb.id
 }
 
+## Wait for 1 minute so that our instance can be up properly
 resource "time_sleep" "wait_1m" {
   depends_on      = [aws_instance.myweb, aws_ebs_volume.myebs, aws_volume_attachment.ebs_attach]
   create_duration = "1m"
