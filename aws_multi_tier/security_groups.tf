@@ -22,3 +22,12 @@ resource "aws_vpc_security_group_ingress_rule" "WP_allow_http_ipv4_for_all" {
   ip_protocol       = "tcp"
   to_port           = "80"
 }
+
+## Allow ssh`
+resource "aws_vpc_security_group_ingress_rule" "WP_allow_ssh_for_all" {
+  security_group_id = aws_security_group.wp-sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 22
+  ip_protocol       = "tcp"
+  to_port           = "22"
+}
