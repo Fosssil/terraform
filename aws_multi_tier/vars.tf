@@ -5,3 +5,8 @@ variable "AWS_REGION" {
 variable "AWS_VPC_CIDR" {
   default = "10.0.0.0/16"
 }
+
+variable "RDS_PASSWORD" {
+  type      = string
+  sensitive = true
+}

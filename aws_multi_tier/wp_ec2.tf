@@ -1,5 +1,5 @@
 resource "aws_instance" "wpOS" {
-  ami                    = "ami-0614680123427b75e"
+  ami                    = "ami-0327f51db613d7bd2"
   instance_type          = "t2.micro"
   key_name               = "tf_aws"
   vpc_security_group_ids = [aws_security_group.wp-sg.id]
@@ -19,7 +19,8 @@ resource "null_resource" "null_remote" {
   depends_on = [time_sleep.wait_1m]
   provisioner "remote-exec" {
     inline = [
-      "sudo dnf install git httpd php mariadb105 mariadb105-server -y",
+      "sudo yum install git httpd -y",
+      "sudo amazon-linux-extras install -y php8.2 mariadb10.5",
       "sudo git clone https://github.com/WordPress/WordPress.git",
       "sudo mv WordPress/* /var/www/html/",
       "sudo chown -R apache /var/www/html/",
